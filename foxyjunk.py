@@ -40,7 +40,8 @@ def interpret(data):
         elif datatype == 0xffff0004: # string
             ItemCount = int.from_bytes(segment[0:4], "little") & 0x00ffffff
             if segment[3] == 0x80: # UTF-8
-                curr = bytearray(data[offset+8:offset+8+ItemCount]).decode("utf-8")
+                # convert to latin1 to support a wider range of characters
+                curr = bytearray(data[offset+8:offset+8+ItemCount]).decode("latin-1")
             else: # UTF-16
                 ItemCount *= 2
                 curr = bytearray(data[offset+8:offset+8+ItemCount]).decode("utf-16")
