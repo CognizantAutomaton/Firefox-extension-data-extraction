@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from datetime import datetime
 
 def interpret(data):
     """Interprets uncompressed SQLite
@@ -48,6 +49,11 @@ def interpret(data):
             offset += ItemCount
             if ItemCount % 8 != 0:
                 offset += 8 - (ItemCount % 8)
+        elif datatype == 0xffff0005: # datetime
+            offset += 8
+            segment = data[offset:offset+8]
+            timestamp = struct.unpack('<d', bytes(segment))[0] / 1000
+            curr = datetime.fromtimestamp(timestamp).isoformat()
         elif datatype == 0xffff0007: # array
             ItemCount = int.from_bytes(segment[0:4], "little")
             curr = { "FindKey": True, "Object": [] }
